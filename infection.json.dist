@@ -12,7 +12,18 @@
         "perMutator": "./var/infection-per-mutator.md"
     },
     "mutators": {
-        "@default": true
+        "@default": true,
+        "PublicVisibility": {
+            "ignore": [
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::setName::25"
+            ]
+        },
+        "MethodCallRemoval": {
+            "ignore": [
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::setName::28",
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::runAsyncTest::46"
+            ]
+        }
     },
     "phpUnit": {
         "configDir": "./etc/qa/"

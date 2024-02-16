@@ -4,7 +4,7 @@
     "static", "self", "parent",
     "array", "string", "int", "float", "bool", "iterable", "callable", "void", "object", "mixed",
     "futurePromise", "WyriHaximus\\Constants\\ComposerAutoloader\\LOCATION",
-    "WyriHaximus\\Constants\\Boolean\\FALSE_", "WyriHaximus\\Constants\\Boolean\\TRUE_"
+    "React\\Promise\\Timer\\sleep"
   ],
   "php-core-extensions" : [
     "Core",
