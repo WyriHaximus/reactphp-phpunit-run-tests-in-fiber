@@ -17,6 +17,8 @@ use function React\Promise\Timer\sleep;
 
 trait RunTestsInFibersTrait
 {
+    private const DEFAULT_TIMEOUT_SECONDS = 30;
+
     private string|null $realTestName = null;
 
     /** @codeCoverageIgnore Invoked before code coverage data is being collected. */
@@ -45,7 +47,7 @@ trait RunTestsInFibersTrait
 
         assert(is_string($this->realTestName));
 
-        $timeout         = 60;
+        $timeout         = self::DEFAULT_TIMEOUT_SECONDS;
         $reflectionClass = new ReflectionClass($this::class);
         foreach ($reflectionClass->getAttributes() as $classAttribute) {
             $classTimeout = $classAttribute->newInstance();
