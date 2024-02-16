@@ -7,10 +7,15 @@ namespace WyriHaximus\React\PHPUnit;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_CLASS)]
-final readonly class TimeOut
+final readonly class TimeOut implements TimeOutInterface
 {
     public function __construct(
-        public int|float $timeout,
+        private int|float $timeout,
     ) {
+    }
+
+    public function timeout(): int|float
+    {
+        return $this->timeout;
     }
 }

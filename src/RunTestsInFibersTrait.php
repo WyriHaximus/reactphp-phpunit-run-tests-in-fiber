@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace WyriHaximus\React\PHPUnit;
 
-use React\EventLoop\Loop;
+use React\Promise\PromiseInterface;
 use ReflectionClass;
 
 use function assert;
 use function is_string;
 use function React\Async\async;
 use function React\Async\await;
+use function React\Promise\race;
+use function React\Promise\reject;
+use function React\Promise\Timer\sleep;
 
 trait RunTestsInFibersTrait
 {
+    private const DEFAULT_TIMEOUT_SECONDS = 30;
+
     private string|null $realTestName = null;
 
     /** @codeCoverageIgnore Invoked before code coverage data is being collected. */
@@ -42,15 +47,15 @@ trait RunTestsInFibersTrait
 
         assert(is_string($this->realTestName));
 
-        $timeout         = 30;
+        $timeout         = self::DEFAULT_TIMEOUT_SECONDS;
         $reflectionClass = new ReflectionClass($this::class);
         foreach ($reflectionClass->getAttributes() as $classAttribute) {
             $classTimeout = $classAttribute->newInstance();
-            if (! ($classTimeout instanceof TimeOut)) {
+            if (! ($classTimeout instanceof TimeOutInterface)) {
                 continue;
             }
 
-            $timeout = $classTimeout->timeout;
+            $timeout = $classTimeout->timeout();
         }
 
         /**
@@ -59,26 +64,23 @@ trait RunTestsInFibersTrait
          */
         foreach ($reflectionClass->getMethod($this->realTestName)->getAttributes() as $methodAttribute) {
             $methodTimeout = $methodAttribute->newInstance();
-            if (! ($methodTimeout instanceof TimeOut)) {
+            if (! ($methodTimeout instanceof TimeOutInterface)) {
                 continue;
             }
 
-            $timeout = $methodTimeout->timeout;
+            $timeout = $methodTimeout->timeout();
         }
 
-        $timeout = Loop::addTimer($timeout, static fn () => Loop::stop());
-
-        try {
-            /**
-             * @psalm-suppress MixedArgument
-             * @psalm-suppress UndefinedInterfaceMethod
-             */
-            return await(async(
+        /**
+         * @psalm-suppress MixedArgument
+         * @psalm-suppress UndefinedInterfaceMethod
+         */
+        return await(race([
+            async(
                 fn (): mixed => ([$this, $this->realTestName])(...$args), /** @phpstan-ignore-line */
-            )());
-        } finally {
-            Loop::cancelTimer($timeout);
-        }
+            )(),
+            sleep($timeout)->then(static fn (): PromiseInterface => reject(new TimedOut('Test timed out after ' . $timeout . ' second(s)'))),
+        ]));
     }
 
     final protected function runTest(): mixed

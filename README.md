@@ -43,6 +43,43 @@ final class SomeTest extends TestCase
 }
 ```
 
+## Timeouts
+
+This package supports marking a test failed once a timeout has been reached. Note that this doesn't stop anything
+running in the fiber the rest runs in or cleans up the loop as we cannot kill the running fiber once it starts. An
+exception is thrown in the scope between the test and PHPUnit that handles running the test in a fiber. And this is out
+of control of the test.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use PHPUnit\Framework\TestCase;
+use React\Promise\Promise;
+use WyriHaximus\React\PHPUnit\RunTestsInFibersTrait;
+use WyriHaximus\React\PHPUnit\TimeOut;
+
+use function React\Async\await;
+
+#[TimeOut(30)]
+final class SomeTest extends TestCase
+{
+    use RunTestsInFibersTrait;
+
+    /**
+     * @test
+     */
+    #[TimeOut(0.1)]
+    public function happyFlow()
+    {
+        self::assertTrue(await(new Promise(static function (callable $resolve): void {
+            $resolve(true);
+        })));
+    }
+}
+```
+
 
 # License
 

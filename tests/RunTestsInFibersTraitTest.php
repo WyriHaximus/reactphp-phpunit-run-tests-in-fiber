@@ -7,19 +7,22 @@ namespace WyriHaximus\Tests\React\PHPUnit;
 use PHPUnit\Framework\TestCase;
 use React\EventLoop\Loop;
 use WyriHaximus\React\PHPUnit\RunTestsInFibersTrait;
+use WyriHaximus\React\PHPUnit\TimedOut;
 use WyriHaximus\React\PHPUnit\TimeOut;
 
 use function React\Async\async;
 use function React\Async\await;
 use function React\Promise\Timer\sleep;
 
-#[TimeOut(1)]
+#[SomeAttribute]
+#[TimeOut(0.5)]
+#[SomeAttribute]
 final class RunTestsInFibersTraitTest extends TestCase
 {
     use RunTestsInFibersTrait;
 
-    #[TimeOut(0.1)]
-    public function testAllTestsAreRanInAFiber(): void
+    /** @test */
+    public function allTestsAreRanInAFiber(): void
     {
         self::expectOutputString('ab');
 
@@ -30,5 +33,26 @@ final class RunTestsInFibersTraitTest extends TestCase
         await(sleep(0.01));
 
         echo 'b';
+    }
+
+    /** @test */
+    #[SomeAttribute]
+    #[TimeOut(0.1)]
+    #[SomeAttribute]
+    public function methodLevelTimeout(): void
+    {
+        self::expectException(TimedOut::class);
+        self::expectExceptionMessage('Test timed out after 0.1 second(s)');
+
+        await(sleep(0.2));
+    }
+
+    /** @test */
+    public function classLevelTimeout(): void
+    {
+        self::expectException(TimedOut::class);
+        self::expectExceptionMessage('Test timed out after 0.5 second(s)');
+
+        await(sleep(0.6));
     }
 }
