@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace WyriHaximus\React\PHPUnit;
 
-use React\Promise\PromiseInterface;
+use React\EventLoop\Loop;
+use React\Promise\Deferred;
 use ReflectionClass;
 
 use function assert;
@@ -12,8 +13,6 @@ use function is_string;
 use function React\Async\async;
 use function React\Async\await;
 use function React\Promise\race;
-use function React\Promise\reject;
-use function React\Promise\Timer\sleep;
 
 trait RunTestsInFibersTrait
 {
@@ -69,6 +68,9 @@ trait RunTestsInFibersTrait
             $timeout = $methodTimeout->timeout();
         }
 
+        $sleepingDeferred = new Deferred();
+        $sleepTimer       = Loop::addTimer($timeout, static fn () => $sleepingDeferred->reject(new TimedOut('Test timed out after ' . $timeout . ' second(s)')));
+
         /**
          * @psalm-suppress MixedArgument
          * @psalm-suppress UndefinedInterfaceMethod
@@ -76,8 +78,8 @@ trait RunTestsInFibersTrait
         return await(race([
             async(
                 fn (): mixed => ([$this, $this->realTestName])(...$args), /** @phpstan-ignore-line */
-            )(),
-            sleep($timeout)->then(static fn (): PromiseInterface => reject(new TimedOut('Test timed out after ' . $timeout . ' second(s)'))),
+            )()->always(static fn () => Loop::cancelTimer($sleepTimer)),
+            $sleepingDeferred->promise(),
         ]));
     }
 
