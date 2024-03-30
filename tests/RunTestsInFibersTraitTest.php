@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WyriHaximus\Tests\React\PHPUnit;
 
+use Fiber;
 use PHPUnit\Framework\TestCase;
 use React\EventLoop\Loop;
 use WyriHaximus\React\PHPUnit\RunTestsInFibersTrait;
@@ -33,6 +34,11 @@ final class RunTestsInFibersTraitTest extends TestCase
         await(sleep(0.01));
 
         echo 'b';
+    }
+
+    public function testFiberGetCurrentReturnsAFiberInstance(): void
+    {
+        self::assertInstanceOf(Fiber::class, Fiber::getCurrent());
     }
 
     /** @test */
