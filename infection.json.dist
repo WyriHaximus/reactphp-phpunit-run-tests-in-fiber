@@ -15,13 +15,13 @@
         "@default": true,
         "PublicVisibility": {
             "ignore": [
-                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::setName::25"
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::setName::24"
             ]
         },
         "MethodCallRemoval": {
             "ignore": [
-                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::setName::28",
-                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::runAsyncTest::46"
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::setName::27",
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::runAsyncTest::45"
             ]
         }
     },
