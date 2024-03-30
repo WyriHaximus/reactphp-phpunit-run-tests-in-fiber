@@ -80,7 +80,7 @@ trait RunTestsInFibersTrait
         return await(race([
             async(
                 fn (): mixed => ([$this, $this->realTestName])(...$args), /** @phpstan-ignore-line */
-            )()->always(static fn () => Loop::cancelTimer($sleepTimer)),
+            )()->finally(static fn () => Loop::cancelTimer($sleepTimer)),
             $sleepingDeferred->promise(),
         ]));
     }
