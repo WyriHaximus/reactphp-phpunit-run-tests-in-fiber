@@ -8,8 +8,6 @@ use React\EventLoop\Loop;
 use React\Promise\Deferred;
 use ReflectionClass;
 
-use function assert;
-use function is_string;
 use function React\Async\async;
 use function React\Async\await;
 use function React\Promise\race;
@@ -18,16 +16,8 @@ trait RunTestsInFibersTrait
 {
     private const DEFAULT_TIMEOUT_SECONDS = 30;
 
-    private string|null $realTestName = null;
-
-    /** @codeCoverageIgnore Invoked before code coverage data is being collected. */
-    final public function setName(string $name): void
-    {
-        /** @psalm-suppress InternalMethod */
-        parent::setName($name);
-
-        $this->realTestName = $name;
-    }
+    /** @var non-empty-string */
+    private string $realTestName = 'noop';
 
     /**
      * @internal
@@ -36,15 +26,11 @@ trait RunTestsInFibersTrait
      */
     final protected function runAsyncTest(mixed ...$args): mixed
     {
-        assert(is_string($this->realTestName));
-
         /**
          * @psalm-suppress InternalMethod
          * @psalm-suppress PossiblyNullArgument
          */
         parent::setName($this->realTestName);
-
-        assert(is_string($this->realTestName));
 
         $timeout         = self::DEFAULT_TIMEOUT_SECONDS;
         $reflectionClass = new ReflectionClass($this::class);
@@ -87,6 +73,8 @@ trait RunTestsInFibersTrait
 
     final protected function runTest(): mixed
     {
+        $this->realTestName = $this->name();
+
         /** @psalm-suppress InternalMethod */
         parent::setName('runAsyncTest');
 
