@@ -8,6 +8,7 @@ use React\EventLoop\Loop;
 use React\Promise\Deferred;
 use ReflectionClass;
 
+use function get_parent_class;
 use function React\Async\async;
 use function React\Async\await;
 use function React\Promise\race;
@@ -26,12 +27,6 @@ trait RunTestsInFibersTrait
      */
     final protected function runAsyncTest(mixed ...$args): mixed
     {
-        /**
-         * @psalm-suppress InternalMethod
-         * @psalm-suppress PossiblyNullArgument
-         */
-        parent::setName($this->realTestName);
-
         $timeout         = self::DEFAULT_TIMEOUT_SECONDS;
         $reflectionClass = new ReflectionClass($this::class);
         foreach ($reflectionClass->getAttributes() as $classAttribute) {
@@ -71,13 +66,25 @@ trait RunTestsInFibersTrait
         ]));
     }
 
-    final protected function runTest(): mixed
+    final protected function setUp(): void
     {
         $this->realTestName = $this->name();
 
-        /** @psalm-suppress InternalMethod */
-        parent::setName('runAsyncTest');
+        /** @phpstan-ignore argument.type */
+        $reflectionClass = new ReflectionClass(get_parent_class($this));
+        $property        = $reflectionClass->getProperty('methodName');
+        $property->setValue($this, 'runAsyncTest');
 
-        return parent::runTest();
+        parent::setUp();
+    }
+
+    final protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        /** @phpstan-ignore argument.type */
+        $reflectionClass = new ReflectionClass(get_parent_class($this));
+        $property        = $reflectionClass->getProperty('methodName');
+        $property->setValue($this, $this->realTestName);
     }
 }
