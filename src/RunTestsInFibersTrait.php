@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WyriHaximus\React\PHPUnit;
 
+use PHPUnit\Framework\TestCase;
 use React\EventLoop\Loop;
 use React\Promise\Deferred;
 use ReflectionClass;
@@ -71,7 +72,7 @@ trait RunTestsInFibersTrait
         $this->realTestName = $this->name();
 
         /** @phpstan-ignore argument.type */
-        $reflectionClass = new ReflectionClass(get_parent_class($this));
+        $reflectionClass = new ReflectionClass(TestCase::class);
         $property        = $reflectionClass->getProperty('methodName');
         $property->setValue($this, 'runAsyncTest');
 
@@ -83,7 +84,7 @@ trait RunTestsInFibersTrait
         parent::tearDown();
 
         /** @phpstan-ignore argument.type */
-        $reflectionClass = new ReflectionClass(get_parent_class($this));
+        $reflectionClass = new ReflectionClass(TestCase::class);
         $property        = $reflectionClass->getProperty('methodName');
         $property->setValue($this, $this->realTestName);
     }
