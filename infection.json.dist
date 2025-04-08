@@ -13,6 +13,8 @@
     },
     "mutators": {
         "@default": true,
+        "Concat": false,
+        "ConcatOperandRemoval": false,
         "PublicVisibility": {
             "ignore": [
                 "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::setName::24"
@@ -21,6 +23,31 @@
         "MethodCallRemoval": {
             "ignore": [
                 "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::setName::27",
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::runAsyncTest::45",
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::setUp::78",
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::tearDown::83"
+            ]
+        },
+        "InstanceOf_": {
+            "ignore": [
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::runAsyncTest::34",
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::runAsyncTest::47"
+            ]
+        },
+        "LogicalNot": {
+            "ignore": [
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::runAsyncTest::47"
+            ]
+        },
+        "Continue_": {
+            "ignore": [
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::runAsyncTest::35",
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::runAsyncTest::48"
+            ]
+        },
+        "Foreach_": {
+            "ignore": [
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::runAsyncTest::32",
                 "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::runAsyncTest::45"
             ]
         }
