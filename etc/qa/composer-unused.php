@@ -8,6 +8,6 @@ use ComposerUnused\ComposerUnused\Configuration\PatternFilter;
 use Webmozart\Glob\Glob;
 
 return static function (Configuration $config): Configuration {
-    return $config
-        ->addNamedFilter(NamedFilter::fromString('phpunit/phpunit'));
+    return $config;
+//        ->addNamedFilter(NamedFilter::fromString('phpunit/phpunit'));
 };
