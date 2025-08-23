@@ -15,7 +15,7 @@ use function React\Promise\race;
 
 trait RunTestsInFibersTrait
 {
-    private const DEFAULT_TIMEOUT_SECONDS = 30;
+    private const int DEFAULT_TIMEOUT_SECONDS = 30;
 
     /** @var non-empty-string */
     private string $realTestName = 'noop';
@@ -68,23 +68,24 @@ trait RunTestsInFibersTrait
 
     final protected function setUp(): void
     {
+        parent::setUp();
+
+        /** @phpstan-ignore method.internal */
         $this->realTestName = $this->name();
 
         /** @phpstan-ignore argument.type */
         $reflectionClass = new ReflectionClass(TestCase::class);
         $property        = $reflectionClass->getProperty('methodName');
         $property->setValue($this, 'runAsyncTest');
-
-        parent::setUp();
     }
 
     final protected function tearDown(): void
     {
-        parent::tearDown();
-
         /** @phpstan-ignore argument.type */
         $reflectionClass = new ReflectionClass(TestCase::class);
         $property        = $reflectionClass->getProperty('methodName');
         $property->setValue($this, $this->realTestName);
+
+        parent::tearDown();
     }
 }

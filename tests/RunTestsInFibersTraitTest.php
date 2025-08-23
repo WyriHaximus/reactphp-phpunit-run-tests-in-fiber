@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WyriHaximus\Tests\React\PHPUnit;
 
 use Fiber;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use React\EventLoop\Loop;
 use WyriHaximus\React\PHPUnit\RunTestsInFibersTrait;
@@ -22,7 +23,7 @@ final class RunTestsInFibersTraitTest extends TestCase
 {
     use RunTestsInFibersTrait;
 
-    /** @test */
+    #[Test]
     public function allTestsAreRanInAFiber(): void
     {
         self::expectOutputString('ab');
@@ -41,10 +42,10 @@ final class RunTestsInFibersTraitTest extends TestCase
         self::assertInstanceOf(Fiber::class, Fiber::getCurrent());
     }
 
-    /** @test */
     #[SomeAttribute]
     #[TimeOut(0.1)]
     #[SomeAttribute]
+    #[Test]
     public function methodLevelTimeout(): void
     {
         self::expectException(TimedOut::class);
@@ -53,7 +54,7 @@ final class RunTestsInFibersTraitTest extends TestCase
         await(sleep(0.2));
     }
 
-    /** @test */
+    #[Test]
     public function classLevelTimeout(): void
     {
         self::expectException(TimedOut::class);

@@ -24,8 +24,8 @@
             "ignore": [
                 "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::setName::27",
                 "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::runAsyncTest::45",
-                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::setUp::78",
-                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::tearDown::83"
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::setUp::71",
+                "WyriHaximus\\React\\PHPUnit\\RunTestsInFibersTrait::tearDown::89"
             ]
         },
         "InstanceOf_": {
