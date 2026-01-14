@@ -37,7 +37,8 @@ final class RunTestsInFibersTraitTest extends TestCase
         echo 'b';
     }
 
-    public function testFiberGetCurrentReturnsAFiberInstance(): void
+    #[Test]
+    public function fiberGetCurrentReturnsAFiberInstance(): void
     {
         self::assertInstanceOf(Fiber::class, Fiber::getCurrent());
     }
