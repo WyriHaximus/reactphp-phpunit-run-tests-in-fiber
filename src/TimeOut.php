@@ -9,6 +9,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_CLASS)]
 final readonly class TimeOut implements TimeOutInterface
 {
+    /** @api */
     public function __construct(
         private int|float $timeout,
     ) {
