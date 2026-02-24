@@ -8,8 +8,6 @@ use RuntimeException;
 
 /**
  * Ignore to allow Runtime Exception extension
- *
- * @phpstan-ignore-next-line
  */
 final class TimedOut extends RuntimeException
 {
