@@ -8,3 +8,4 @@ parameters:
 		noExtends:
 			classesAllowedToBeExtended:
 				- InvalidArgumentException
+				- RuntimeException

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace WyriHaximus\React\PHPUnit;
 
-use PHPUnit\Framework\TestCase;
 use React\EventLoop\Loop;
 use React\Promise\Deferred;
 use ReflectionClass;
@@ -17,11 +16,8 @@ trait RunTestsInFibersTrait
 {
     private const int DEFAULT_TIMEOUT_SECONDS = 30;
 
-    /** @var non-empty-string */
-    private string $realTestName = 'noop';
-
-    /** @internal */
-    final protected function runAsyncTest(mixed ...$args): mixed
+    /** @param array<mixed> $testArguments */
+    protected function invokeTestMethod(string $methodName, array $testArguments): mixed
     {
         $timeout         = self::DEFAULT_TIMEOUT_SECONDS;
         $reflectionClass = new ReflectionClass($this::class);
@@ -34,7 +30,7 @@ trait RunTestsInFibersTrait
             $timeout = $classTimeout->timeout();
         }
 
-        foreach ($reflectionClass->getMethod($this->realTestName)->getAttributes() as $methodAttribute) {
+        foreach ($reflectionClass->getMethod($methodName)->getAttributes() as $methodAttribute) {
             $methodTimeout = $methodAttribute->newInstance();
             if (! ($methodTimeout instanceof TimeOutInterface)) {
                 continue;
@@ -48,32 +44,10 @@ trait RunTestsInFibersTrait
 
         return await(race([
             async(
-                fn (): mixed => ([$this, $this->realTestName])(...$args),
+                /** @phpstan-ignore method.dynamicName */
+                fn (): mixed => $this->{$methodName}(...$testArguments),
             )()->finally(static fn () => Loop::cancelTimer($sleepTimer)),
             $sleepingDeferred->promise(),
         ]));
-    }
-
-    final protected function setUp(): void
-    {
-        parent::setUp();
-
-        /** @phpstan-ignore method.internal */
-        $this->realTestName = $this->name();
-
-        /** @phpstan-ignore argument.type */
-        $reflectionClass = new ReflectionClass(TestCase::class);
-        $property        = $reflectionClass->getProperty('methodName');
-        $property->setValue($this, 'runAsyncTest');
-    }
-
-    final protected function tearDown(): void
-    {
-        /** @phpstan-ignore argument.type */
-        $reflectionClass = new ReflectionClass(TestCase::class);
-        $property        = $reflectionClass->getProperty('methodName');
-        $property->setValue($this, $this->realTestName);
-
-        parent::tearDown();
     }
 }
