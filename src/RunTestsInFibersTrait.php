@@ -20,11 +20,7 @@ trait RunTestsInFibersTrait
     /** @var non-empty-string */
     private string $realTestName = 'noop';
 
-    /**
-     * @internal
-     *
-     * @phpstan-ignore-next-line
-     */
+    /** @internal */
     final protected function runAsyncTest(mixed ...$args): mixed
     {
         $timeout         = self::DEFAULT_TIMEOUT_SECONDS;
@@ -38,10 +34,6 @@ trait RunTestsInFibersTrait
             $timeout = $classTimeout->timeout();
         }
 
-        /**
-         * @psalm-suppress InternalMethod
-         * @psalm-suppress PossiblyNullArgument
-         */
         foreach ($reflectionClass->getMethod($this->realTestName)->getAttributes() as $methodAttribute) {
             $methodTimeout = $methodAttribute->newInstance();
             if (! ($methodTimeout instanceof TimeOutInterface)) {
@@ -54,13 +46,9 @@ trait RunTestsInFibersTrait
         $sleepingDeferred = new Deferred();
         $sleepTimer       = Loop::addTimer($timeout, static fn () => $sleepingDeferred->reject(new TimedOut('Test timed out after ' . $timeout . ' second(s)')));
 
-        /**
-         * @psalm-suppress MixedArgument
-         * @psalm-suppress UndefinedInterfaceMethod
-         */
         return await(race([
             async(
-                fn (): mixed => ([$this, $this->realTestName])(...$args), /** @phpstan-ignore-line */
+                fn (): mixed => ([$this, $this->realTestName])(...$args),
             )()->finally(static fn () => Loop::cancelTimer($sleepTimer)),
             $sleepingDeferred->promise(),
         ]));
