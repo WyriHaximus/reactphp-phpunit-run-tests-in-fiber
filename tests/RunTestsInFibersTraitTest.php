@@ -50,7 +50,7 @@ final class RunTestsInFibersTraitTest extends TestCase
     public function methodLevelTimeout(): void
     {
         self::expectException(TimedOut::class);
-        self::expectExceptionMessage('Test timed out after 0.1 second(s)');
+        self::expectExceptionMessageIsOrContains('Test timed out after 0.1 second(s)');
 
         await(sleep(0.2));
     }
@@ -59,7 +59,7 @@ final class RunTestsInFibersTraitTest extends TestCase
     public function classLevelTimeout(): void
     {
         self::expectException(TimedOut::class);
-        self::expectExceptionMessage('Test timed out after 0.5 second(s)');
+        self::expectExceptionMessageIsOrContains('Test timed out after 0.5 second(s)');
 
         await(sleep(0.6));
     }
